@@ -19,8 +19,8 @@ localparam
     STOP = 3;
 
 
-    int state = INIT; 
-    int next_state; 
+    integer state = INIT; 
+    integer next_state; 
 
 // CLOCK MULTIPLIER: Instantiate the clock multiplier
 wire uart_clock; 
@@ -35,14 +35,13 @@ clock_mul
 
 // CROSS CLOCK DOMAIN: The rx_ready flag should only be set 1 one for one source 
 // clock cycle. Use the cross clock domain technique discussed in class to handle this.
-logic r1_pulse, r2_pulse, r3_pulse; 
+logic r1_pulse, r2_pulse; 
 
 always_ff @(posedge clk) begin
     r1_pulse <= done;
     r2_pulse <= r1_pulse;
-    r3_pulse <= r2_pulse;
 
-    if ((r3_pulse == 1'b0) && (r2_pulse == 1'b1)) begin
+    if ((r2_pulse == 1'b0) && (r1_pulse == 1'b1)) begin
         rx_ready <= 1'b1; 
     end else begin
         rx_ready <= 1'b0; 
