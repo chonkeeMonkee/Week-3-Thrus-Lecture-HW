@@ -1,4 +1,3 @@
-`include "clock_mul.sv"
 
 module uart_rx (
     input clk,
@@ -68,12 +67,12 @@ always_comb begin
 end
 
 always_ff @ (posedge uart_clock)begin
+    done <= 0; 
 
     case(state)
         INIT: begin
             rx_data <= 0; 
             bit_count <= 0; 
-            done <= 0; 
         end
         IDLE: begin
             bit_count <= 0;
@@ -83,7 +82,9 @@ always_ff @ (posedge uart_clock)begin
             bit_count <= bit_count + 1;      
         end 
         STOP: begin
-            done <= 1; 
+            if (rx) begin
+                done <= 1;
+            end 
             bit_count <= 0; 
         end
         default: begin

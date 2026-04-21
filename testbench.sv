@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`include "uart_rx.sv"
 
 module testbench();
 
