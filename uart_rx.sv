@@ -12,11 +12,15 @@ parameter BAUDRATE = 9600;
 
 // STATES: State of the state machine
 localparam DATA_BITS = 8;
+localparam 
+    INIT = 0, 
+    IDLE = 1,
+    RX_DATA = 2,
+    STOP = 3;
 
-    typedef enum logic [2:0] {INIT, IDLE, RX_DATA, STOP} state_t; 
 
-    state_t state = INIT; 
-    state_t next_state; 
+    int state = INIT; 
+    int next_state; 
 
 // CLOCK MULTIPLIER: Instantiate the clock multiplier
 wire uart_clock; 
@@ -53,14 +57,14 @@ always_ff @ (posedge uart_clock) begin
     state <= next_state;
 end
 
-always_comb begin
+always @(*) begin
     next_state = state;
 
     case (state)
         INIT : next_state = IDLE;
-        IDLE : next_state = state_t' (rx ? IDLE : RX_DATA);
-        RX_DATA : next_state = state_t' (bit_count == 7 ? STOP : RX_DATA);
-        STOP : next_state = state_t' (rx ? IDLE : STOP);
+        IDLE : next_state =  (rx ? IDLE : RX_DATA);
+        RX_DATA : next_state =  (bit_count == 7 ? STOP : RX_DATA);
+        STOP : next_state =  (rx ? IDLE : STOP);
         default: next_state = INIT;
 
     endcase
